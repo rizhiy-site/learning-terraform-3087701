@@ -66,7 +66,11 @@ module "blog_alb" {
       default_action = {
         type = "forward"
         forward = {
-          target_group_index = 0
+          target_groups = [
+            {
+              target_group_index = 0
+            }
+          ]
         }
       }
     }

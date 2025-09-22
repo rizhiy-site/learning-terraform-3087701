@@ -40,9 +40,12 @@ module "blog_autoscaling" {
   max_size            = 2
   vpc_zone_identifier = module.blog_vpc.public_subnets
   security_groups     = [module.blog_sg.security_group_id]
+
   instance_type       = var.instance_type
   image_id            = data.aws_ami.app_ami.id
+  
 }
+
 
 module "blog_alb" {
   source  = "terraform-aws-modules/alb/aws"
@@ -69,6 +72,7 @@ module "blog_alb" {
     blog-http = {
       port     = 80
       protocol = "HTTP"
+      target_group_index = 0
       default_action = {
         type             = "forward"
       }

@@ -66,13 +66,13 @@ module "blog_alb" {
     }
   ]
 
-  http_tcp_listeners = [
-    {
+  listeners = {
+   blog-http = {
       port               = 80
       protocol           = "HTTP"
       target_group_index = 0
     }
-  ]
+  }
 
   tags = {
     Environment = "dev"

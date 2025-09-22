@@ -71,7 +71,6 @@ module "blog_alb" {
       protocol = "HTTP"
       default_action = {
         type             = "forward"
-        target_group_arn = module.blog_alb.target_group_arns["blog"]
       }
     }
   }

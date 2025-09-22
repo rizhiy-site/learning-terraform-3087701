@@ -32,7 +32,7 @@ module "blog_vpc" {
 
 module "blog_autoscaling" {
   source  = "terraform-aws-modules/autoscaling/aws"
-  version = "6.5.2"
+  # version = "6.5.2"
 
   name = "blog"
 
@@ -47,7 +47,7 @@ module "blog_autoscaling" {
 
 module "blog_alb" {
   source  = "terraform-aws-modules/alb/aws"
-  version = "~> 6.0"
+  # version = "~> 6.0"
 
   name = "blog-alb"
 
@@ -81,7 +81,7 @@ module "blog_alb" {
 
 module "blog_sg" {
   source  = "terraform-aws-modules/security-group/aws"
-  version = "4.13.0"
+  # version = "4.13.0"
 
   vpc_id  = module.blog_vpc.vpc_id
   name    = "blog"

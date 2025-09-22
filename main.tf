@@ -57,7 +57,7 @@ module "alb" {
 
 
   target_groups = {
-    {
+    ex-instance = {
       name_prefix      = "blog"
       protocol         = "HTTP"
       port             = 80
@@ -68,13 +68,12 @@ module "alb" {
 
   
   listeners = {   
-    {
+   ex-http = {
       port     = 80
       protocol = "HTTP"
       redirect = {
         port        = "80"
-        protocol    = "HTTPS"
-        status_code = "HTTP_301"
+        protocol    = "HTTP"
       }
     }
   }

@@ -91,19 +91,9 @@ module "blog_alb" {
 
   listeners = {
     http = {
-      port            = 80
-      protocol        = "HTTP"
-      default_action = {
-        type = "forward"
-        forward = {
-          target_groups = [
-            {
-              target_group_key = "blog"
-              weight = 100
-            }
-          ]
-        }
-      }
+      port               = 80
+      protocol           = "HTTP"
+      target_group_index = 0
     }
   }
 

@@ -82,11 +82,12 @@ resource "aws_lb_target_group" "blog" {
 
 # Create Application Load Balancer
 resource "aws_lb" "blog" {
-  name               = "blog-alb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [module.blog_sg.security_group_id]
-  subnets            = module.blog_vpc.public_subnets
+  name                       = "blog-alb"
+  internal                   = false
+  load_balancer_type        = "application"
+  security_groups           = [module.blog_sg.security_group_id]
+  subnets                   = module.blog_vpc.public_subnets
+  enable_deletion_protection = false
 
   tags = {
     Environment = "Development"

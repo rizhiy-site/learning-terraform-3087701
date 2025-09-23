@@ -43,7 +43,12 @@ module "blog_autoscaling" {
 
   instance_type       = var.instance_type
   image_id            = data.aws_ami.app_ami.id
-  
+}
+
+# Attach the Auto Scaling Group to the target group
+resource "aws_autoscaling_attachment" "asg_attachment" {
+  autoscaling_group_name = module.blog_autoscaling.autoscaling_group_name
+  lb_target_group_arn   = module.blog_alb.target_group_arns["blog"]
 }
 
 
@@ -74,6 +79,7 @@ module "blog_alb" {
         unhealthy_threshold = 3
         timeout            = 6
       }
+      create_attachment = false  # Disable automatic attachment
     }
   }
 
@@ -81,9 +87,13 @@ module "blog_alb" {
     blog-http = {
       port     = 80
       protocol = "HTTP"
-      default_action = {
-        type = "forward"
-        target_group_index = 0
+      forward = {
+        target_groups = [
+          {
+            target_group_key = "blog"
+            weight          = 100
+          }
+        ]
       }
     }
   }

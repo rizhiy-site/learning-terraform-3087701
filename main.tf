@@ -51,50 +51,27 @@ module "autoscaling" {
 # Attach the Auto Scaling Group to the target group
 resource "aws_autoscaling_attachment" "asg_attachment" {
   autoscaling_group_name = module.autoscaling.autoscaling_group_name
-  lb_target_group_arn   = module.blog_alb.target_groups["blog"].arn
+  lb_target_group_arn   = aws_lb_target_group.blog.arn
 }
 
-module "blog_alb" {
-  source  = "terraform-aws-modules/alb/aws"
-  version = "10.0.0"
+# Create Target Group
+resource "aws_lb_target_group" "blog" {
+  name_prefix = "blog-"
+  port        = 80
+  protocol    = "HTTP"
+  vpc_id      = module.blog_vpc.vpc_id
+  target_type = "instance"
 
-  name = "blog-alb"
-
-  vpc_id             = module.blog_vpc.vpc_id
-  subnets            = module.blog_vpc.public_subnets
-  security_groups    = [module.blog_sg.security_group_id]
-
-  target_groups = {
-    blog = {
-      name_prefix          = "blog-"
-      backend_protocol     = "HTTP"
-      backend_port         = 80
-      target_type         = "instance"
-      preserve_client_ip  = true
-      deregistration_delay = 30
-
-      health_check = {
-        enabled             = true
-        interval           = 30
-        path               = "/"
-        port               = "traffic-port"
-        healthy_threshold   = 3
-        unhealthy_threshold = 3
-        timeout            = 6
-        matcher            = "200-399"
-      }
-
-      # Disable automatic target attachment since we're using ASG
-      create_attachment = false
-    }
-  }
-
-  listeners = {
-    http = {
-      port               = 80
-      protocol           = "HTTP"
-      target_group_index = 0
-    }
+  health_check {
+    enabled             = true
+    healthy_threshold   = 3
+    interval            = 30
+    matcher             = "200-399"
+    path                = "/"
+    port                = "traffic-port"
+    protocol            = "HTTP"
+    timeout             = 6
+    unhealthy_threshold = 3
   }
 
   tags = {
@@ -102,6 +79,33 @@ module "blog_alb" {
     Project     = "Example"
   }
 }
+
+# Create Application Load Balancer
+resource "aws_lb" "blog" {
+  name               = "blog-alb"
+  internal           = false
+  load_balancer_type = "application"
+  security_groups    = [module.blog_sg.security_group_id]
+  subnets            = module.blog_vpc.public_subnets
+
+  tags = {
+    Environment = "Development"
+    Project     = "Example"
+  }
+}
+
+# Create ALB Listener
+resource "aws_lb_listener" "blog_http" {
+  load_balancer_arn = aws_lb.blog.arn
+  port              = 80
+  protocol          = "HTTP"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.blog.arn
+  }
+}
+
 
 module "blog_sg" {
   source  = "terraform-aws-modules/security-group/aws"

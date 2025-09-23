@@ -65,7 +65,7 @@ module "blog_alb" {
       protocol = "HTTP"
       default_action = {
         type = "forward"
-        target_group_arn = module.blog_autoscaling.target_group_arns[0]
+        target_group_arn = module.blog_autoscaling.autoscaling_group_target_group_arns[0]
       }
     }
   }

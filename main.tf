@@ -81,7 +81,7 @@ resource "aws_lb_target_group" "blog" {
 }
 
 # Create Application Load Balancer
-resource "aws_lb" "blog" {
+resource "aws_lb" "blog-lb" {
   name                       = "blog-alb"
   internal                   = false
   load_balancer_type        = "application"
@@ -97,7 +97,7 @@ resource "aws_lb" "blog" {
 
 # Create ALB Listener
 resource "aws_lb_listener" "blog_http" {
-  load_balancer_arn = aws_lb.blog.arn
+  load_balancer_arn = aws_lb.blog-lb.arn
   port              = 80
   protocol          = "HTTP"
 

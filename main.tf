@@ -51,7 +51,7 @@ module "autoscaling" {
 # Attach the Auto Scaling Group to the target group
 resource "aws_autoscaling_attachment" "asg_attachment" {
   autoscaling_group_name = module.autoscaling.autoscaling_group_name
-  lb_target_group_arn   = module.blog_alb.target_groups["blog"].forward
+  lb_target_group_arn   = module.blog_alb.target_groups["blog"].forward["blog"].arn
 }
 
 module "blog_alb" {

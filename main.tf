@@ -48,7 +48,7 @@ module "blog_autoscaling" {
 # Attach the Auto Scaling Group to the target group
 resource "aws_autoscaling_attachment" "asg_attachment" {
   autoscaling_group_name = module.blog_autoscaling.autoscaling_group_name
-  lb_target_group_arn   = module.blog_alb.target_group_arns["blog"]
+  lb_target_group_arn   = module.blog_alb.target_groups["main"].arn
 }
 
 
@@ -65,11 +65,12 @@ module "blog_alb" {
   security_groups    = [module.blog_sg.security_group_id]
 
   target_groups = {
-    blog = {
-      name_prefix      = "blog-"
-      backend_protocol = "HTTP"
-      backend_port     = 80
-      target_type      = "instance"
+    main = {
+      name_prefix          = "main-"
+      backend_protocol     = "HTTP"
+      backend_port         = 80
+      target_type         = "instance"
+      deregistration_delay = 10
       health_check = {
         enabled             = true
         interval           = 30
@@ -79,21 +80,23 @@ module "blog_alb" {
         unhealthy_threshold = 3
         timeout            = 6
       }
-      create_attachment = false  # Disable automatic attachment
     }
   }
 
   listeners = {
-    blog-http = {
+    http = {
       port     = 80
       protocol = "HTTP"
-      forward = {
-        target_groups = [
-          {
-            target_group_key = "blog"
-            weight          = 100
-          }
-        ]
+      default_action = {
+        type = "forward"
+        forward = {
+          target_groups = [
+            {
+              target_group_key = "main"
+              weight          = 100
+            }
+          ]
+        }
       }
     }
   }

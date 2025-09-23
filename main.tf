@@ -69,7 +69,7 @@ module "blog_alb" {
   security_groups    = [module.blog_sg.security_group_id]
 
   listeners = {
-    blog-http = blog_listener.id
+    blog-http = resource.aws_alb_listener.blog_listener.id
   }
 
   tags = {

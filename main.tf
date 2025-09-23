@@ -56,7 +56,7 @@ resource "aws_autoscaling_attachment" "asg_attachment" {
 
 # Create Target Group
 resource "aws_lb_target_group" "blog" {
-  name_prefix = "${var.environment.name}-blog-"
+  name_prefix = "blog-"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = module.blog_vpc.vpc_id

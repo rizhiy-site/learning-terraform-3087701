@@ -95,13 +95,14 @@ module "blog_alb" {
       protocol        = "HTTP"
       default_action = {
         type = "forward"
-      }
-      forward = {
-        target_groups = [
-          {
-            target_group_key = "blog"
-          }
-        ]
+        forward = {
+          target_groups = [
+            {
+              target_group_key = "blog"
+              weight = 100
+            }
+          ]
+        }
       }
     }
   }

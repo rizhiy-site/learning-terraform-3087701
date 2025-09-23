@@ -46,16 +46,7 @@ module "blog_autoscaling" {
   
 }
 
-resource "aws_alb_listener" "blog_listener" {
-  load_balancer_arn = module.blog_alb.this_lb_arn
-  port              = 80
-  protocol          = "HTTP"
 
-  default_action {
-    type             = "forward"
-    target_group_arn = module.blog_autoscaling.autoscaling_group_target_group_arns[0]
-  }
-}
 module "blog_alb" {
   source  = "terraform-aws-modules/alb/aws"
   version = "10.0.0"
@@ -69,7 +60,14 @@ module "blog_alb" {
   security_groups    = [module.blog_sg.security_group_id]
 
   listeners = {
-    blog-http = resource.aws_alb_listener.blog_listener.id
+    blog-http = {
+      port     = 80
+      protocol = "HTTP"
+      default_action = {
+        type = "forward"
+        target_group_arn = module.blog_autoscaling.autoscaling_group_target_group_arns[0]
+      }
+    }
   }
 
   tags = {

@@ -59,13 +59,31 @@ module "blog_alb" {
   subnets            = module.blog_vpc.public_subnets
   security_groups    = [module.blog_sg.security_group_id]
 
+  target_groups = {
+    blog = {
+      name_prefix      = "blog-"
+      backend_protocol = "HTTP"
+      backend_port     = 80
+      target_type      = "instance"
+      health_check = {
+        enabled             = true
+        interval           = 30
+        path               = "/"
+        port               = "traffic-port"
+        healthy_threshold   = 3
+        unhealthy_threshold = 3
+        timeout            = 6
+      }
+    }
+  }
+
   listeners = {
     blog-http = {
       port     = 80
       protocol = "HTTP"
       default_action = {
         type = "forward"
-        target_group_arn = module.blog_autoscaling.autoscaling_group_target_group_arns[0]
+        target_group_index = 0
       }
     }
   }

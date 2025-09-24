@@ -1,3 +1,3 @@
 output "environment_url" {
-  value = module.blog_alb.dns_name
+  value = resource.aws_lb.blog.dns_name
 }

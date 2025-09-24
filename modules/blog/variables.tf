@@ -1,3 +1,13 @@
+variable "project" {
+  description = "Project name"
+  type = object({
+    name = string
+  })
+  default = {
+    name = "Learning project"
+  }
+}
+
 variable "instance_type" {
   description = "Type of EC2 instance to provision"
   default     = "t3.nano"

@@ -75,8 +75,8 @@ resource "aws_lb_target_group" "blog" {
   }
 
   tags = {
-    Environment = "Development"
-    Project     = "Example"
+    Environment = var.environment.name
+    Project     = var.project.name
   }
 }
 

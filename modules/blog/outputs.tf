@@ -1,3 +1,4 @@
-output "environment_url" {
-  value = module.blog.resource.blog_lb.dns_name
+output "alb_dns_name" {
+  description = "The DNS name of the load balancer"
+  value       = aws_lb.blog_lb.dns_name
 }

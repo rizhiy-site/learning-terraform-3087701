@@ -1,3 +1,3 @@
 output "environment_url" {
-  value = resource.aws_lb.blog.dns_name
+  value = resource.blog_lb.dns_name
 }
